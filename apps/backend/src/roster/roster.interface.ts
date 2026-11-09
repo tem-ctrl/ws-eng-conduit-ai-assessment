@@ -7,4 +7,5 @@ export interface IRosterEntry {
 
 export interface IRosterRO {
   roster: IRosterEntry[];
+  rosterCount: number;
 }

@@ -7,7 +7,11 @@ import { RosterResponse } from '@realworld/core/api-types';
 export class RosterApiService {
   constructor(private readonly api: ApiService) {}
 
-  getRoster(): Observable<RosterResponse> {
-    return this.api.get<RosterResponse>('/roster');
+  getRoster(params?: { limit?: number; offset?: number }): Observable<RosterResponse> {
+    const search = new URLSearchParams();
+    if (params?.limit !== undefined) search.set('limit', String(params.limit));
+    if (params?.offset !== undefined) search.set('offset', String(params.offset));
+    const qs = search.toString();
+    return this.api.get<RosterResponse>(`/roster${qs ? `?${qs}` : ''}`);
   }
 }

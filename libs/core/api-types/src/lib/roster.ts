@@ -7,4 +7,5 @@ export interface RosterEntryDTO {
 
 export interface RosterResponse {
   readonly roster: ReadonlyArray<RosterEntryDTO>;
+  readonly rosterCount: number;
 }

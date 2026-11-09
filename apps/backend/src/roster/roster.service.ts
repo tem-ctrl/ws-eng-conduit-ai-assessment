@@ -13,7 +13,15 @@ export class RosterService {
     private readonly userRepository: EntityRepository<User>,
   ) {}
 
-  async getRoster(): Promise<IRosterRO> {
+  async getRoster(query: Record<string, string> = {}): Promise<IRosterRO> {
+    const limit = 'limit' in query ? Math.max(0, Number(query.limit)) : undefined;
+    const offset = 'offset' in query ? Math.max(0, Number(query.offset)) : undefined;
+
+    const countRow = await this.em.getConnection().execute<{ count: number }[]>(
+      `select count(*) as count from \`user\``,
+    );
+    const rosterCount = Number(countRow?.[0]?.count ?? 0);
+
     const rows = (await this.em.getConnection().execute(
       `
       select u.username as username,
@@ -24,7 +32,13 @@ export class RosterService {
       left join article a on a.author_id = u.id
       group by u.id
       order by coalesce(sum(a.favorites_count), 0) desc
+      ${limit !== undefined ? 'limit ?' : ''}
+      ${offset !== undefined ? 'offset ?' : ''}
       `,
+      [
+        ...(limit !== undefined ? [limit] : []),
+        ...(offset !== undefined ? [offset] : []),
+      ],
     )) as Array<{
       username: string;
       articlesCount: number | string | null;
@@ -39,6 +53,7 @@ export class RosterService {
         favoritesCount: Number(r.favoritesCount ?? 0),
         firstArticleDate: r.firstArticleDate ? new Date(r.firstArticleDate as any).toISOString() : null,
       })),
+      rosterCount,
     };
   }
 }

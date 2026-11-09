@@ -27,6 +27,12 @@
             </tr>
           </tbody>
         </table>
+
+        <cdt-pager
+          (setPage)="setPage($event)"
+          [currentPage]="page$ | async"
+          [totalPages]="totalPages$ | async"
+        ></cdt-pager>
       </ng-container>
 
       <ng-template #loading>
