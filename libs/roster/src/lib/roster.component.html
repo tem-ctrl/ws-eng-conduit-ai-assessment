@@ -1,1 +1,37 @@
-<p>TODO</p>
+<div class="container page">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Conduit Roster</h1>
+
+      <ng-container *ngIf="roster$ | async as roster; else loading">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th class="text-end">Articles</th>
+              <th class="text-end">Favorites</th>
+              <th>First Article</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of roster">
+              <td>
+                <a [routerLink]="['/profile', r.username]">{{ r.username }}</a>
+              </td>
+              <td class="text-end">{{ r.articlesCount }}</td>
+              <td class="text-end">{{ r.favoritesCount }}</td>
+              <td>
+                <span *ngIf="r.firstArticleDate; else none">{{ r.firstArticleDate | date: 'mediumDate' }}</span>
+                <ng-template #none>—</ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+
+      <ng-template #loading>
+        <p>Loading roster…</p>
+      </ng-template>
+    </div>
+  </div>
+  </div>
